@@ -128,7 +128,7 @@ class HBNBCommand(cmd.Cmd):
         )
 
         class_name = ''
-        param_kwargs = {}
+        p_kwargs = {}
         not_updated_attrs = ['id', 'updated_at', 'created_at', '__class__']
         class_match = re.match(name_pattern, args)
         if class_match is not None:  # There is a match
@@ -138,15 +138,15 @@ class HBNBCommand(cmd.Cmd):
                 param_fullmatch = re.fullmatch(param_pattern, param)
                 if param_fullmatch is not None:
                     key_name = param_fullmatch.group('name')
-                    string_value = param_fullmatch.group('p_string')
+                    str_value = param_fullmatch.group('p_string')
                     float_value = param_fullmatch.group('p_float')
                     int_value = param_fullmatch.group('p_int')
-                    if string_value is not None:
-                        param_kwargs[key_name] = string_value[1:-1].replace('_', ' ')
+                    if str_value is not None:
+                        p_kwargs[key_name] = str_value[1:-1].replace('_', ' ')
                     if float_value is not None:
-                        param_kwargs[key_name] = float(float_value)
+                        p_kwargs[key_name] = float(float_value)
                     if int_value is not None:
-                        param_kwargs[key_name] = int(int_value)
+                        p_kwargs[key_name] = int(int_value)
         else:  # There is no match for className
             class_name = args
 
@@ -157,7 +157,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
             return
         new_instance = HBNBCommand.classes[class_name]()
-        for k, v in param_kwargs.items():
+        for k, v in p_kwargs.items():
             if k not in not_updated_attrs:
                 setattr(new_instance, k, v)
         storage.save()
@@ -225,7 +225,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del (storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -357,6 +357,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
