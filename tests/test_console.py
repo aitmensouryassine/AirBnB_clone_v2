@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """This module contains Test Cases of Console interpreter"""
 
-from unittest import TestCase
+from unittest import TestCase, skipIf
 from unittest.mock import patch
 from io import StringIO
 from console import HBNBCommand
@@ -11,12 +11,13 @@ from models.user import User
 from models.place import Place
 from models import storage
 from tests import clear_output
+import os
 
 
 class TestConsole_create(TestCase):
     """Represents test class for create command"""
 
-    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db',
+    @skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db',
                      'Test for FileStorage')
     def test_file_storage_create(self):
         """Test case for create command by
