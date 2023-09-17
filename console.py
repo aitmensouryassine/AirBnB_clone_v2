@@ -10,6 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+import re
 
 
 class HBNBCommand(cmd.Cmd):
@@ -73,7 +74,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
+                    if pline[0] == '{' and pline[-1] == '}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -115,13 +116,50 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        if not args:
+        name_pattern = r'(?P<name>(?:[a-zA-Z_])(?:\w)*)'
+        string_pattern = r'(?P<p_string>"([^"]|\")*")'
+        float_pattern = r'(?P<p_float>[-+]?\d+\.\d+)'
+        int_pattern = r'(?P<p_int>[-+]?\d+)'
+        param_pattern = '{}=({}|{}|{})'.format(
+            name_pattern,
+            string_pattern,
+            float_pattern,
+            int_pattern
+        )
+
+        class_name = ''
+        param_kwargs = {}
+        not_updated_attrs = ['id', 'updated_at', 'created_at', '__class__']
+        class_match = re.match(name_pattern, args)
+        if class_match is not None:  # There is a match
+            class_name = class_match.group('name')
+            params = args[len(class_name):].strip().split()
+            for param in params:
+                param_fullmatch = re.fullmatch(param_pattern, param)
+                if param_fullmatch is not None:
+                    key_name = param_fullmatch.group('name')
+                    string_value = param_fullmatch.group('p_string')
+                    float_value = param_fullmatch.group('p_float')
+                    int_value = param_fullmatch.group('p_int')
+                    if string_value is not None:
+                        param_kwargs[key_name] = string_value[1:-1].replace('_', ' ')
+                    if float_value is not None:
+                        param_kwargs[key_name] = float(float_value)
+                    if int_value is not None:
+                        param_kwargs[key_name] = int(int_value)
+        else:  # There is no match for className
+            class_name = args
+
+        if not class_name:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        elif class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
+        new_instance = HBNBCommand.classes[class_name]()
+        for k, v in param_kwargs.items():
+            if k not in not_updated_attrs:
+                setattr(new_instance, k, v)
         storage.save()
         print(new_instance.id)
         storage.save()
@@ -272,7 +310,7 @@ class HBNBCommand(cmd.Cmd):
                 args.append(v)
         else:  # isolate args
             args = args[2]
-            if args and args[0] is '\"':  # check for quoted arg
+            if args and args[0] == '\"':  # check for quoted arg
                 second_quote = args.find('\"', 1)
                 att_name = args[1:second_quote]
                 args = args[second_quote + 1:]
@@ -280,10 +318,10 @@ class HBNBCommand(cmd.Cmd):
             args = args.partition(' ')
 
             # if att_name was not quoted arg
-            if not att_name and args[0] is not ' ':
+            if not att_name and args[0] != ' ':
                 att_name = args[0]
             # check for quoted val arg
-            if args[2] and args[2][0] is '\"':
+            if args[2] and args[2][0] == '\"':
                 att_val = args[2][1:args[2].find('\"', 1)]
 
             # if att_val was not quoted arg
