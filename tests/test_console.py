@@ -16,6 +16,8 @@ from tests import clear_output
 class TestConsole_create(TestCase):
     """Represents test class for create command"""
 
+    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db',
+                     'Test for FileStorage')
     def test_file_storage_create(self):
         """Test case for create command by
         using the file storage
