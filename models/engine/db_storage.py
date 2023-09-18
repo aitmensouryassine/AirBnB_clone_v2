@@ -12,7 +12,8 @@ from models.review import Review
 from models.city import City
 
 classes = {"State": State,
-           "City": City}
+           "City": City,
+           "User": User}
 
 
 class DBStorage:
