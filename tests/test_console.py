@@ -91,3 +91,45 @@ class TestConsole_create(TestCase):
             self.assertIn('Hajar123@', result)
             cur.close()
             db_create.close()
+
+    @skipIf(storage_type != 'db', 'DBStorage test case')
+    def test_db_storage_show(self):
+        """Tests show command by using database storage"""
+        with patch('sys.stdout', new=StringIO()) as out:
+            user1 = User(email="hajar@test.com", password="hello120")
+            c_db = MySQLdb.connect(
+                    host=os.getenv('HBNB_MYSQL_HOST'),
+                    port=3306,
+                    user=os.getenv('HBNB_MYSQL_USER'),
+                    passwd=os.getenv('HBNB_MYSQL_PWD'),
+                    db=os.getenv('HBNB_MYSQL_DB')
+                    )
+            cur = c_db.cursor()
+            cur.execute('SELECT * FROM users WHERE id="{}"'.format(user1.id))
+            result = cur.fetchone()
+            self.assertFalse(result is not None)
+            HBNBCommand().onecmd('show User {}'.format(user1.id))
+            output = out.getvalue().strip()
+            expected = '** no instance found **'
+            self.assertEqual(output, expected)
+            user1.save()
+            c_db = MySQLdb.connect(
+                    host=os.getenv('HBNB_MYSQL_HOST'),
+                    port=3306,
+                    user=os.getenv('HBNB_MYSQL_USER'),
+                    passwd=os.getenv('HBNB_MYSQL_PWD'),
+                    db=os.getenv('HBNB_MYSQL_DB')
+                    )
+            cur = c_db.cursor()
+            cur.execute('SELECT * FROM users WHERE id="{}"'.format(user1.id))
+            result = cur.fetchone()
+            self.assertTrue(result is not None)
+            self.assertIn('hajar@test.com', result)
+            self.assertIn('hello120', result)
+            clear_output(out)
+            HBNBCommand().onecmd('show User {}'.format(user1.id))
+            output = out.getvalue()
+            # self.assertIn('hajar@test.com', output)
+            # self.assertIn('hello120', output)
+            cur.close()
+            c_db.close()
