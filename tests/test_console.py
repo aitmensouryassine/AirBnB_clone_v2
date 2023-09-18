@@ -12,13 +12,14 @@ from models.place import Place
 from models import storage
 from tests import clear_output
 import os
+from models import storage_type
 
 
 class TestConsole_create(TestCase):
     """Represents test class for create command"""
 
-    @skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db',
-                     'Test for FileStorage')
+    @skipIf(storage_type == 'db',
+            'Test for FileStorage')
     def test_file_storage_create(self):
         """Test case for create command by
         using the file storage

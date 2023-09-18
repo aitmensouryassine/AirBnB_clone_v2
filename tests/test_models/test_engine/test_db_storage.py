@@ -1,12 +1,15 @@
 #!/usr/bin/python3
 """ Module for testing database storage"""
-from unittest import TestCase
+from unittest import TestCase, skipIf
 from models import storage
 import os
 import MySQLdb
 from models.user import User
+from models import storage_type
 
 
+@skipIf(storage_type != 'db',
+        'db_storage test not supported')
 class TestDBStorage(TestCase):
     """Represents Test class for DB storage"""
     def test_new_db_storage(self):
@@ -37,4 +40,4 @@ class TestDBStorage(TestCase):
         new_count = cur.fetchone()
         cur.close()
         db.close()
-        self.assertEqual(new_count[0], count[0])
+        self.assertEqual(new_count[0], count[0] + 1)

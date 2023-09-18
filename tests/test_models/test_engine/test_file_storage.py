@@ -4,8 +4,11 @@ import unittest
 from models.base_model import BaseModel
 from models import storage
 import os
+from models import storage_type
 
 
+@unittest.skipIf(storage_type == 'db',
+                 'fileStorage not supported is this case')
 class test_fileStorage(unittest.TestCase):
     """ Class to test the file storage method """
 
