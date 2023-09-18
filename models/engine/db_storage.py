@@ -13,7 +13,8 @@ from models.city import City
 
 classes = {"State": State,
            "City": City,
-           "User": User}
+           "User": User,
+           "Place": Place}
 
 
 class DBStorage:
