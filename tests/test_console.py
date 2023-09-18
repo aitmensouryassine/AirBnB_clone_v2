@@ -13,6 +13,8 @@ from models import storage
 from tests import clear_output
 import os
 from models import storage_type
+import sqlalchemy
+import MySQLdb
 
 
 class TestConsole_create(TestCase):
@@ -60,3 +62,32 @@ class TestConsole_create(TestCase):
             HBNBCommand().onecmd('create City name="Sale"')
             city_id = out.getvalue().strip()
             self.assertIn("City.{}".format(city_id), storage.all().keys())
+
+    @skipIf(storage_type != 'db', 'Test for DBStorage')
+    def test_db_storage_create(self):
+        """Tests create command with database storage"""
+        with self.assertRaises(sqlalchemy.exc.OperationalError):
+            HBNBCommand().onecmd('create User')
+
+        with patch('sys.stdout', new=StringIO()) as out:
+            HBNBCommand().onecmd('create User first_name="Yassine" \
+                    last_name="HAJAR_TEST" email="test@test.ma" \
+                    password="Hajar123@"')
+            output = out.getvalue().strip()
+            db_create = MySQLdb.connect(
+                    host=os.getenv('HBNB_MYSQL_HOST'),
+                    port=3306,
+                    user=os.getenv('HBNB_MYSQL_USER'),
+                    passwd=os.getenv('HBNB_MYSQL_PWD'),
+                    db=os.getenv('HBNB_MYSQL_DB')
+                    )
+            cur = db_create.cursor()
+            cur.execute('SELECT * FROM users WHERE id="{}"'.format(output))
+            result = cur.fetchone()
+            self.assertFalse(result is None)
+            self.assertIn('Yassine', result)
+            self.assertIn('HAJAR TEST', result)
+            self.assertIn('test@test.ma', result)
+            self.assertIn('Hajar123@', result)
+            cur.close()
+            db_create.close()
