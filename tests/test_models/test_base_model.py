@@ -30,6 +30,10 @@ class test_basemodel(unittest.TestCase):
         except Exception:
             pass
 
+    def test_init(self):
+        """Tests init method of the BaseModel class."""
+        self.assertIsInstance(self.value(), BaseModel)
+
     def test_default(self):
         """ default tests of BaseModel """
         i = self.value()
@@ -79,9 +83,9 @@ class test_basemodel(unittest.TestCase):
 
     def test_kwargs_one(self):
         """ tests by using kwargs with one argument"""
-        n = {'Name': 'test'}
-        with self.assertRaises(KeyError):
-            new = self.value(**n)
+        n = {'name': 'test'}
+        new = self.value(**n)
+        self.assertEqual(new.name, n['name'])
 
     def test_id(self):
         """ tests id attribute of BaseModel """
