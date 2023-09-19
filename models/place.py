@@ -5,6 +5,20 @@ from sqlalchemy import Column, String, Integer, Float
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from models import storage_type
+from models.amenity import Amenity
+from sqlalchemy.sql.schema import Table
+
+if storage_type == 'db':
+    place_amenity = Table('place_amenity', Base.metadata,
+                          Column('place_id', String(60),
+                                 ForeignKey('places.id'),
+                                 primary_key=True,
+                                 nullable=False),
+                          Column('amenity_id', String(60),
+                                 ForeignKey('amenities.id'),
+                                 primary_key=True,
+                                 nullable=False)
+                          )
 
 
 class Place(BaseModel, Base):
@@ -40,6 +54,22 @@ class Place(BaseModel, Base):
             all_reviews = storage.all("Review")
             return [review for review in all_reviews
                     if review.place_id == self.id]
+
+        @property
+        def amenities(self):
+            """getter for amenities attribute"""
+            from models import storage
+            all_amenities = storage.all(Amenity)
+            return [amenity for amenity in all_amenities
+                    if amenity.id in self.amenity_ids]
+
+        @amenities.setter
+        def amenities(self, obj):
+            """setter for amenities attribute"""
+            if obj is not None:
+                if isinstance(obj, Amenity):
+                    if obj.id not in self.amenity_ids:
+                        self.amenity_ids.append(obj.id)
     else:
         city_id = Column(String(60), ForeignKey('cities.id'),
                          nullable=False)
@@ -55,3 +85,6 @@ class Place(BaseModel, Base):
         longitude = Column(Float, nullable=True)
         reviews = relationship('Review', backref='place',
                                cascade='all, delete')
+        amenities = relationship('Amenity', secondary=place_amenity,
+                                 viewonly=False,
+                                 backref='place_amenities')
