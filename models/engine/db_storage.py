@@ -10,6 +10,10 @@ from models.state import State
 from models.place import Place
 from models.review import Review
 from models.city import City
+from models import storage_type
+
+if storage_type == 'db':
+    from models.place import place_amenity
 
 classes = {"State": State,
            "City": City,
