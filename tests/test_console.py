@@ -66,10 +66,9 @@ class TestConsole_create(TestCase):
     @skipIf(storage_type != 'db', 'Test for DBStorage')
     def test_db_storage_create(self):
         """Tests create command with database storage"""
-        with self.assertRaises(sqlalchemy.exc.OperationalError):
-            HBNBCommand().onecmd('create User')
-
         with patch('sys.stdout', new=StringIO()) as out:
+            with self.assertRaises(sqlalchemy.exc.IntegrityError):
+                HBNBCommand().onecmd('create User')
             HBNBCommand().onecmd('create User first_name="Yassine" \
                     last_name="HAJAR_TEST" email="test@test.ma" \
                     password="Hajar123@"')
