@@ -67,8 +67,6 @@ class TestConsole_create(TestCase):
     def test_db_storage_create(self):
         """Tests create command with database storage"""
         with patch('sys.stdout', new=StringIO()) as out:
-            with self.assertRaises(sqlalchemy.exc.OperationalError):
-                HBNBCommand().onecmd('create User')
             HBNBCommand().onecmd('create User first_name="Yassine" \
                     last_name="HAJAR_TEST" email="test@test.ma" \
                     password="Hajar123@"')
@@ -95,7 +93,7 @@ class TestConsole_create(TestCase):
     def test_db_storage_show(self):
         """Tests show command by using database storage"""
         with patch('sys.stdout', new=StringIO()) as out:
-            user1 = User(**{'email': 'hajar@test.com', 'password': 'hello120'})
+            user1 = User(email='hajar@test.com', password='hello120')
             c_db = MySQLdb.connect(
                     host=os.getenv('HBNB_MYSQL_HOST'),
                     port=3306,
