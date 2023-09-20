@@ -95,7 +95,7 @@ class TestConsole_create(TestCase):
     def test_db_storage_show(self):
         """Tests show command by using database storage"""
         with patch('sys.stdout', new=StringIO()) as out:
-            user1 = User(email="hajar@test.com", password="hello120")
+            user1 = User(**{'email': 'hajar@test.com', 'password': 'hello120'})
             c_db = MySQLdb.connect(
                     host=os.getenv('HBNB_MYSQL_HOST'),
                     port=3306,
@@ -128,7 +128,7 @@ class TestConsole_create(TestCase):
             clear_output(out)
             HBNBCommand().onecmd('show User {}'.format(user1.id))
             output = out.getvalue()
-            # self.assertIn('hajar@test.com', output)
-            # self.assertIn('hello120', output)
+            # self.assertIn('hajar@test.com', out.getvalue())
+            # self.assertIn('hello120', out.getvalue())
             cur.close()
             c_db.close()
