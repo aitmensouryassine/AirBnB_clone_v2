@@ -103,3 +103,62 @@ class TestDBStorage(TestCase):
         self.assertNotIn(u_key, storage.all(User).keys())
         del_cur.close()
         del_db.close()
+
+    def new_and_save_db_storage(self):
+        """testing  the new and save methods"""
+        db = MySQLdb.connect(user=os.getenv('HBNB_MYSQL_USER'),
+                             host=os.getenv('HBNB_MYSQL_HOST'),
+                             passwd=os.getenv('HBNB_MYSQL_PWD'),
+                             port=3306,
+                             db=os.getenv('HBNB_MYSQL_DB'))
+        new_user = User(**{'first_name': 'jack',
+                           'last_name': 'bond',
+                           'email': 'jack@bond.com',
+                           'password': 12345})
+        cur = db.cursor()
+        cur.execute('SELECT COUNT(*) FROM users')
+        old_count = cur.fetchall()
+        cur.close()
+        db.close()
+        new_user.save()
+        db = MySQLdb.connect(user=os.getenv('HBNB_MYSQL_USER'),
+                             host=os.getenv('HBNB_MYSQL_HOST'),
+                             passwd=os.getenv('HBNB_MYSQL_PWD'),
+                             port=3306,
+                             db=os.getenv('HBNB_MYSQL_DB'))
+        cur = db.cursor()
+        cur.execute('SELECT COUNT(*) FROM users')
+        new_count = cur.fetchall()
+        self.assertEqual(new_count[0][0], old_count[0][0] + 1)
+        cur.close()
+        db.close()
+            
+    def test_reload_db_storage(self):
+        """ Tests the reloading of the database session """
+        dbc = MySQLdb.connect(
+            host=os.getenv('HBNB_MYSQL_HOST'),
+            port=3306,
+            user=os.getenv('HBNB_MYSQL_USER'),
+            passwd=os.getenv('HBNB_MYSQL_PWD'),
+            db=os.getenv('HBNB_MYSQL_DB')
+        )
+        cursor = dbc.cursor()
+        cursor.execute(
+            'INSERT INTO users(id, created_at, updated_at, email, password' +
+            ', first_name, last_name) VALUES(%s, %s, %s, %s, %s, %s, %s);',
+            [
+                '4447-by-me',
+                str(datetime.now()),
+                str(datetime.now()),
+                'ben_pike@yahoo.com',
+                'pass',
+                'Benjamin',
+                'Pike',
+            ]
+        )
+        self.assertNotIn('User.4447-by-me', storage.all())
+        dbc.commit()
+        storage.reload()
+        self.assertIn('User.4447-by-me', storage.all())
+        cursor.close()
+        dbc.close()
