@@ -19,35 +19,6 @@ class TestDBStorage(TestCase):
         """test case for docstring of DBStorage Class"""
         self.assertIsNot(DBStorage.__doc__, None)
 
-    '''def new_and_save_db_storage(self):
-        """test case for new and save methods"""
-        db = MySQLdb.connect(user=os.getenv('HBNB_MYSQL_USER'),
-                             host=os.getenv('HBNB_MYSQL_HOST'),
-                             passwd=os.getenv('HBNB_MYSQL_PWD'),
-                             port=3306,
-                             db=os.getenv('HBNB_MYSQL_DB'))
-        new_user = User(**{'first_name': 'yassine',
-                           'last_name': 'ALX',
-                           'email': 'yassine@alx.com',
-                           'password': 'pass123*$'})
-        cur = db.cursor()
-        cur.execute('SELECT COUNT(*) FROM users')
-        old_count = cur.fetchone()
-        cur.close()
-        db.close()
-        new_user.save()
-        db = MySQLdb.connect(user=os.getenv('HBNB_MYSQL_USER'),
-                             host=os.getenv('HBNB_MYSQL_HOST'),
-                             passwd=os.getenv('HBNB_MYSQL_PWD'),
-                             port=3306,
-                             db=os.getenv('HBNB_MYSQL_DB'))
-        cur = db.cursor()
-        cur.execute('SELECT COUNT(*) FROM users')
-        new_count = cur.fetchone()
-        self.assertEqual(new_count[0], old_count[0] + 1)
-        cur.close()
-        db.close()'''
-
     def test_new_db_storage(self):
         """test case if New object is added to database"""
         new = User(
@@ -108,36 +79,6 @@ class TestDBStorage(TestCase):
         self.assertNotIn(obj_key, storage.all(User).keys())
         cursor.close()
         dbc.close()
-
-    '''def test_reload_db_storage(self):
-        """Test case for reload method"""
-        dbc = MySQLdb.connect(
-            host=os.getenv('HBNB_MYSQL_HOST'),
-            port=3306,
-            user=os.getenv('HBNB_MYSQL_USER'),
-            passwd=os.getenv('HBNB_MYSQL_PWD'),
-            db=os.getenv('HBNB_MYSQL_DB')
-        )
-        cursor = dbc.cursor()
-        cursor.execute(
-            'INSERT INTO users(id, created_at, updated_at, email, password' +
-            ', first_name, last_name) VALUES(%s, %s, %s, %s, %s, %s, %s);',
-            [
-                'xxxx-xxxx-xxxx-xxxx',
-                str(datetime.now()),
-                str(datetime.now()),
-                'hajarTest@alx.com',
-                'hello123',
-                'Yassine',
-                'Ait',
-            ]
-        )
-        self.assertNotIn('User.xxxx-xxxx-xxxx-xxxx', storage.all())
-        dbc.commit()
-        storage.reload()
-        self.assertIn('User.xxxx-xxxx-xxxx-xxxx', storage.all())
-        cursor.close()
-        dbc.close()'''
 
     def test_save_db_storage(self):
         """ test case if object is saved to database"""
