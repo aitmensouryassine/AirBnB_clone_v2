@@ -14,7 +14,7 @@ class test_state(test_basemodel):
         self.name = "State"
         self.value = State
 
-    def test_name(self):
+    def test_name3(self):
         """ test case for name attribute """
         new = self.value()
         if storage_type != 'db':
