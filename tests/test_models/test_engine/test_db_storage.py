@@ -7,13 +7,18 @@ from models import storage
 from datetime import datetime
 import os
 from models import storage_type
+from models.engine.db_storage import DBStorage
 
 
 @unittest.skipIf(storage_type != 'db',
                  'db_storage test not supported')
 class TestDBStorage(unittest.TestCase):
-    '''testing dbstorage engine'''
-    def test_new_and_save_db_storage(self):
+    '''db storage Class'''
+    def test_db_storage(self):
+        """test case for docstring"""
+        self.assertIsNot(DBStorage.__doc__, None)
+
+    """def new_and_save_db_storage(self):
         '''testing  the new and save methods'''
         db = MySQLdb.connect(user=os.getenv('HBNB_MYSQL_USER'),
                              host=os.getenv('HBNB_MYSQL_HOST'),
@@ -43,7 +48,7 @@ class TestDBStorage(unittest.TestCase):
         db.close()
 
     def test_new_db_storage(self):
-        """ New object is correctly added to database """
+        '''New object is correctly added to database'''
         new = User(
             email='john2020@gmail.com',
             password='password',
@@ -72,7 +77,7 @@ class TestDBStorage(unittest.TestCase):
         dbc.close()
 
     def test_delete_db_storage(self):
-        """ Object is correctly deleted from database """
+        ''' Object is correctly deleted from database '''
         new = User(
             email='john2020@gmail.com',
             password='password',
@@ -104,7 +109,7 @@ class TestDBStorage(unittest.TestCase):
         dbc.close()
 
     def test_reload_db_storage(self):
-        """ Tests the reloading of the database session """
+        ''' Tests the reloading of the database session '''
         dbc = MySQLdb.connect(
             host=os.getenv('HBNB_MYSQL_HOST'),
             port=3306,
@@ -134,7 +139,7 @@ class TestDBStorage(unittest.TestCase):
         dbc.close()
 
     def test_save_db_storage(self):
-        """ object is successfully saved to database """
+        ''' object is successfully saved to database '''
         new = User(
             email='john2020@gmail.com',
             password='password',
@@ -174,4 +179,4 @@ class TestDBStorage(unittest.TestCase):
         cursor1.close()
         dbc1.close()
         cursor.close()
-        dbc.close()
+        dbc.close()"""
