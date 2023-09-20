@@ -13,7 +13,7 @@ from models import storage_type
                  'db_storage test not supported')
 class TestDBStorage(unittest.TestCase):
     '''testing dbstorage engine'''
-    def test_new_and_save(self):
+    def test_new_and_save_db_storage(self):
         '''testing  the new and save methods'''
         db = MySQLdb.connect(user=os.getenv('HBNB_MYSQL_USER'),
                              host=os.getenv('HBNB_MYSQL_HOST'),
@@ -42,7 +42,7 @@ class TestDBStorage(unittest.TestCase):
         cur.close()
         db.close()
 
-    def test_new(self):
+    def test_new_db_storage(self):
         """ New object is correctly added to database """
         new = User(
             email='john2020@gmail.com',
@@ -71,7 +71,7 @@ class TestDBStorage(unittest.TestCase):
         cursor.close()
         dbc.close()
 
-    def test_delete(self):
+    def test_delete_db_storage(self):
         """ Object is correctly deleted from database """
         new = User(
             email='john2020@gmail.com',
@@ -103,7 +103,7 @@ class TestDBStorage(unittest.TestCase):
         cursor.close()
         dbc.close()
 
-    def test_reload(self):
+    def test_reload_db_storage(self):
         """ Tests the reloading of the database session """
         dbc = MySQLdb.connect(
             host=os.getenv('HBNB_MYSQL_HOST'),
@@ -133,7 +133,7 @@ class TestDBStorage(unittest.TestCase):
         cursor.close()
         dbc.close()
 
-    def test_save(self):
+    def test_save_db_storage(self):
         """ object is successfully saved to database """
         new = User(
             email='john2020@gmail.com',
