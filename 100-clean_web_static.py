@@ -2,7 +2,7 @@
 """
 Fabric script : deletes out-of-date archives
 """
-from fabric.api import put, run, local, env
+from fabric.api import put, run, local, env, lcd, cd
 from fabric.decorators import runs_once
 from datetime import datetime
 import os
@@ -76,10 +76,20 @@ def do_clean(number=0):
     versions = os.listdir("versions")
     versions = sorted(versions)
 
-    while (num):
+    for i in range(num):
         versions.pop()
-        num -= 1
 
-    for filename_ext in versions:
-        local("rm -rf ./versions/{}".format(filename_ext))
-        run("rm -rf /data/web_static/releases".format(filename_ext[:-4]))
+    with lcd("versions"):
+        for filename_ext in versions:
+            local("rm -rf ./{}".format(filename_ext))
+
+    with cd("/data/web_static/releases"):
+        releases = run("ls -tr").split()
+        web_static_list = [release for release in releases
+                      if "web_static_" in release]
+
+        for i in range(num):
+            web_static_list.pop()
+
+        for web_static in web_static_list:
+            run("rm -rf ./{}".format(web_static))
