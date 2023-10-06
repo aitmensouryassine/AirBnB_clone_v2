@@ -84,12 +84,4 @@ def do_clean(number=0):
             local("rm -rf ./{}".format(filename_ext))
 
     with cd("/data/web_static/releases"):
-        releases = run("ls -tr").split()
-        web_static_list = [release for release in releases
-                      if "web_static_" in release]
-
-        for i in range(num):
-            web_static_list.pop()
-
-        for web_static in web_static_list:
-            run("rm -rf ./{}".format(web_static))
+        run("ls -dt * | tail -n +{} | sudo xargs rm -rf".format(num))
