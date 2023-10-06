@@ -72,7 +72,7 @@ def do_clean(number=0):
     if int(number) == 0:
         num = 2
     else:
-        num = int(num) + 1
+        num = int(number) + 1
 
     with lcd("versions"):
         local("ls -dt * | tail -n +{} | sudo xargs rm -f".format(num))
