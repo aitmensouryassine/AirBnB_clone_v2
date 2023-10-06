@@ -38,7 +38,8 @@ def do_deploy(archive_path):
     filename = filename_ext[:-4]
 
     try:
-        put(archive_path, "/tmp/")
+        put(archive_path, "/tmp/{}".format(filename_ext))
+        run("rm -rf /data/web_static/releases/{}".format(filename))
         run("mkdir -p /data/web_static/releases/{}".format(filename))
         run("tar -xzf /tmp/{} -C /data/web_static/releases/{}"
             .format(filename_ext, filename))
