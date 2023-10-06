@@ -31,26 +31,25 @@ def do_pack():
 def do_deploy(archive_path):
     """ Deploy archive"""
 
-    if not os.path.exists(archive_path):
-        return False
-
     try:
+        if not os.path.exists(archive_path):
+            return False
+
         filename_ext = os.path.basename(archive_path)
-        ext_length = ".tgz".length
-        filename = filename_ext[:-ext_length]
+        filename = filename_ext[:-4]
+        releases_path = "/data/web_static/releases/"
 
         put(archive_path, "/tmp/{}".format(filename_ext))
-        run("rm -rf /data/web_static/releases/{}".format(filename))
-        run("mkdir -p /data/web_static/releases/{}".format(filename))
-        run("tar -xzf /tmp/{} -C /data/web_static/releases/{}"
-            .format(filename_ext, filename))
+        run("rm -rf {}{}".format(releases_path, filename))
+        run("mkdir -p {}{}".format(releases_path, filename))
+        run("tar -xzf /tmp/{} -C {}{}"
+            .format(filename_ext, releases_path, filename))
         run("rm /tmp/{}".format(filename_ext))
-        run("mv /data/web_static/releases/{}/web_static/* "
-            "/data/web_static/releases/{}/".format(filename, filename))
-        run("rm -rf /data/web_static/releases/{}/web_static".format(filename))
+        run("mv {0}{1}/web_static/* {0}{1}/".format(releases_path, filename))
+        run("rm -rf {}{}/web_static".format(releases_path, filename))
         run("rm -rf /data/web_static/current")
-        run("ln -s /data/web_static/releases/{}/ /data/web_static/current"
-            .format(filename))
+        run("ln -s {}{}/ /data/web_static/current"
+            .format(releases_path, filename))
         print("New version deployed!")
         return True
     except Exception:
@@ -70,9 +69,10 @@ def deploy():
 def do_clean(number=0):
     """Deletes a giver number of archives"""
 
-    num = int(number)
-    if num == 0:
-        num == 1
+    if int(number) == 0:
+        num = 2
+    else:
+        num = int(num) + 1
 
     with lcd("versions"):
         local("ls -dt * | tail -n +{} | sudo xargs rm -f".format(num))
