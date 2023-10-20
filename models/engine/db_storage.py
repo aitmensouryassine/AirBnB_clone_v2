@@ -93,4 +93,4 @@ class DBStorage:
 
     def close(self):
         """Closes and discard the session"""
-        self.__session.remove()
+        self.__session.close()
